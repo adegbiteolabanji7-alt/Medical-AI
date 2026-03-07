@@ -1,0 +1,8 @@
+# Ignore medical data files
+*.nii.gz
+*.nii
+*.zip
+
+# Ignore Python environment and cache
+__pycache__/
+.ipynb_checkpoints/

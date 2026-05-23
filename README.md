@@ -1,17 +1,29 @@
-Medical AI: 3D Spleen Segmentation
-🩺 Project Overview
-This repository contains a deep learning workflow for the automated segmentation of the spleen from 3D CT scans. This is a critical task in medical imaging for volumetric analysis and surgical planning.
-Goal: Accurately delineate the spleen boundaries in 3D medical images.
-Framework: Python-based implementation utilizing the MONAI (Medical Open Network for AI) framework and PyTorch.
-Dataset: Utilizes the "Spleen" dataset from the Medical Segmentation Decathlon.
-🛠️ Technical Stack
-Language: Python 3.11.
-Environment: Managed via Anaconda/Miniconda in a dedicated medai environment.
-Tools: Jupyter Notebooks, VS Code, and Git.
-📂 Repository Structure
-spleen_segmentation_3d.ipynb: The main training and evaluation pipeline.
-.gitignore: Configured to exclude large medical data files (.nii.gz) to keep the repository lightweight.
-🚀 Future Work
-[ ] Experiment with different U-Net architectures.
-[ ] Implement Dice Loss optimization for better accuracy.
-[ ] Deploy the model as a simple web-based inference tool.
+# Medical AI — Clinical Imaging Portfolio
+
+A portfolio of applied AI projects in medical imaging, 
+built by a diagnostic sonographer training in healthcare AI.
+
+## Projects
+
+### 1. DICOM Router (active)
+Automatically routes DICOM medical imaging files into organised 
+folders based on the Modality tag (0008,0060).
+
+**Why it matters:** Every hospital AI pipeline starts with data 
+ingestion. Correctly routing CT, MRI, and ultrasound files is 
+the foundation before any model touches the data.
+
+**Stack:** Python · pydicom · pathlib · logging
+
+### 2. Medical Image Segmentation Pipeline (coming)
+End-to-end deep learning pipeline for 3D organ segmentation.
+**Stack:** PyTorch · MONAI · Medical Segmentation Decathlon
+
+### 3. Ultrasound AI for Low-Resource Settings (coming)
+Clinical AI for environments with limited infrastructure — 
+informed by direct experience in northern Nigeria.
+
+## About
+MSc AI for Healthcare, University of Hull.  
+Background: BSc Biochemistry + diagnostic sonography.  
+Focus: Clinically-motivated AI tools with regulatory awareness.

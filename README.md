@@ -1,4 +1,4 @@
-# Medical AI — Clinical Imaging Portfolio
+# Medical AI. Clinical Imaging Portfolio
 
 A portfolio of applied AI projects in medical imaging, built by a diagnostic sonographer training in healthcare AI.
 
@@ -18,11 +18,11 @@ End-to-end deep learning pipeline for 3D organ segmentation.
 
 **Stack:** PyTorch · MONAI · Medical Segmentation Decathlon
 
-**Result:** Dice score 0.24 after 50 epochs on Medical Segmentation Decathlon spleen dataset (Google Colab, T4 GPU). Known limitation — score indicates undertrained model; optimisation (longer training, loss function tuning, data augmentation) identified as next step.
+**Result:** Dice score 0.24 after 50 epochs on the Medical Segmentation Decathlon spleen dataset (Google Colab, T4 GPU). Training was stopped while Dice was still improving epoch over epoch, so the model was very likely undertrained rather than fundamentally broken. I haven't yet gone back to confirm that against a longer run, which is the next step: resume training for significantly more epochs, and if Dice still plateaus low, check next whether the loss function (currently plain cross-entropy) needs to move to a Dice-aware or combined loss, since segmentation with class imbalance between organ and background often needs that regardless of training length.
 
-### 3. Ultrasound AI for Low-Resource Settings (in progress — MSc dissertation, pending formal approval)
+### 3. Ultrasound AI for Low-Resource Settings (MSc dissertation, in progress)
 
-CNN classifier for liver lesion classification (HCC vs hemangioma) on B-mode ultrasound, testing robustness under simulated low-resource imaging degradation. Dataset: SMC-LUD (Nature Scientific Data, 2026).
+CNN classifier for liver lesion classification (HCC vs hemangioma) on B-mode ultrasound, testing robustness under simulated low-resource imaging degradation. Dataset: SMC-LUD (Nature Scientific Data, 2026). Supervised by Eva Sousa, University of Hull.
 
 ## Repository Structure
 

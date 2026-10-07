@@ -36,7 +36,7 @@ def get_modality(filepath):
     try:
         ds = pydicom.dcmread(str(filepath),stop_before_pixels = True)
         return ds.Modality
-    except exception as e:
+    except Exception as e:
         logger.warning(f'Could not read {filepath.name}: {e}')
         return None
     

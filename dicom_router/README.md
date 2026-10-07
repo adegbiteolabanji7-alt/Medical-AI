@@ -1,60 +1,68 @@
 # DICOM Router
 
-Automatically routes DICOM medical imaging files into organised 
-subfolders based on the Modality tag (0008,0060).
+A small Python script that sorts DICOM files into folders by modality (CT, MR, US and so on), using the Modality tag (0008,0060). It reads only the header, never the pixel data.
 
-## Clinical motivation
+## Why I built it
 
-In a hospital environment, DICOM files arrive from multiple imaging 
-systems — CT scanners, MRI machines, ultrasound — all landing in the 
-same directory, unsorted. Before any AI model can process this data, 
-it must be correctly organised by modality.
-
-Misrouted files mean a model trained on the wrong data. In clinical 
-AI, that is a patient safety issue.
+In a hospital, files from CT scanners, MRI machines and ultrasound all land in the same place, unsorted. Before any AI model can use them, they need to be organised by modality, because a model fed the wrong data is a patient safety problem. After five years scanning in Nigeria I know real archives are messy, so I made sure one bad file can't stop the whole batch.
 
 ## How it works
 
-1. Scans an input folder for `.dcm` files
-2. Reads the Modality tag from each file's metadata only
-   (`stop_before_pixels=True` — faster, never loads image data)
-3. Copies each file into a named subfolder: `CT_computed_tomography/`,
-   `MR_magnetic_resonance/`, `US_ultrasound/`, etc.
-4. Unknown modalities get their own folder rather than being lost
-5. Unreadable files are logged as warnings — one bad file never 
-   crashes the pipeline
+1. It looks for .dcm files in the input folder.
+2. It reads the Modality tag from each file's header only (stop_before_pixels=True). Routing needs one tag, so loading the image data would waste time and memory.
+3. It copies each file into a named folder such as CT_computed_tomography or MR_magnetic_resonance.
+4. A modality I haven't listed goes into a folder ending in _other, so nothing is lost.
+5. A file that can't be read is logged as a warning and copied into UNKNOWN for a person to check.
 
-## Usage
+## Test run
 
-```bash
-python dicom_router/router.py
-```
+I ran it on four files: a CT, an MR and a radiotherapy plan (all from pydicom's sample data) plus a fake file I made to break it. The three real files went to their own folders and the fake one went to UNKNOWN. The log ended with Routed: 3 | Failed: 1.
 
-Edit the `input_dir` and `output_dir` paths in `router.py` to point 
-to your folders.
+## Running it
+
+From inside the dicom_router folder:
+
+    pip install pydicom
+    python router.py
+
+It reads from data/input and writes to data/output. The paths are set at the bottom of router.py.
+
+## Tests
+
+    pip install pytest
+    python -m pytest -v
+
+Four tests cover a valid CT file, a corrupt file, end-to-end routing and an empty input folder. They use temporary folders so leftover output can't make a test pass by accident.
+
+One test exists because of a real bug: I had typed the exception name in lowercase, which only crashed when a corrupt file arrived, so normal runs never showed it. I fixed it, wrote the test, then put the typo back to check the test failed. It did.
 
 ## Files
 
-- `router.py` — the main routing engine
-- `explore_dicom.py` — interactive exploration of DICOM tag structure
+- router.py: the routing code
+- test_router.py: the tests
+- explore_dicom.py: my script for looking at DICOM tags
 
 ## Design decisions
 
-**Why metadata only?** DICOM pixel data can be several MB per file. 
-Reading only the tags makes the router viable at scale — thousands 
-of overnight scans without memory issues.
+Why header only? Pixel data can be several MB per file, and the router doesn't need it. I haven't benchmarked it on a large archive yet, so I can't give numbers.
 
-**Why copy rather than move?** Non-destructive by default. The 
-original files are always preserved. In clinical systems, you never 
-destroy source data.
+Why copy, not move? The original files are never touched. In clinical systems you don't destroy source data.
 
-**Why logging over print?** Logs are timestamped, severity-levelled, 
-and can be written to file for audit purposes — a regulatory 
-requirement in clinical AI deployments.
+Why logging, not print? Logs have timestamps and severity levels and can be saved to a file, which gives an audit trail. That matters in regulated settings.
+
+## What it doesn't do yet
+
+- It only looks in the top folder, not subfolders.
+- It only picks up files ending in .dcm, so DICOM files with no extension are missed.
+- Two files with the same name overwrite each other in the output.
+- A valid DICOM file with no Modality tag is also treated as unreadable.
+- The paths are fixed in the code, with no command line options.
+- No anonymisation, no PACS connection and no log file yet.
 
 ## Regulatory context
 
-In a production clinical environment this pipeline would sit upstream 
-of a quality check and anonymisation step before any data reaches an 
-AI model. Patient data governance (GDPR, NHS DSP Toolkit) requires 
-that PII is handled and minimised at every stage.
+This is only file sorting. It makes no clinical decisions and is not a medical device. It does not remove patient details, so it shouldn't be used on real patient data without anonymisation and proper data governance (UK GDPR and NHS rules). In a real pipeline it would sit before a quality check and an anonymisation step.
+
+## Next
+
+Subfolder search, checking for DICOM by header instead of file extension, safe filenames, command line options, then anonymisation.
